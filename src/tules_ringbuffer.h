@@ -34,26 +34,35 @@ namespace tules // Template Utility Library for Embedded Systems
   class RingBuffer
   {
   private:
-    T mData[capacity];
-    TypeCapacity<capacity>::type mReadPos;
-    TypeCapacity<capacity>::type mWritePos;
-
-    TypeCapacity<capacity>::type IncrementedWrapedValue(TypeCapacity<capacity>::type val)
+    class CyclicIndex
     {
-      if (++val == capacity)
-        return 0;
-      else
+    private:
+      typedef TypeCapacity<capacity>::type mIdx = 0;
+
+    public:
+      TypeCapacity<capacity>::type operator=(TypeCapacity<capacity>::type val) { return mIdx = val; }
+
+      operator size_t() const { return mIdx; }
+
+      size_t operator++(int)
+      {
+        size_t val = mIdx;
+        if (++mIdx >= capacity)
+          mIdx = 0;
         return val;
-    }
+      }
+
+      size_t operator++()
+      {
+        (*this)++;
+        return *this;
+      }
+    };
+
+    T mData[capacity];
+    CyclicIndex mReadPos, mWritePos;
 
   public:
-    /**
-     * @brief Default constructor
-     */
-    RingBuffer() : mReadPos(0), mWritePos(0)
-    {
-    }
-
     /**
      * @brief Resets the RingBuffer
      */
@@ -65,12 +74,12 @@ namespace tules // Template Utility Library for Embedded Systems
     /**
      * @return The maximal number of elements that can be contained in the RingBuffer
      */
-    size_t Capacity() { return capacity; }
+    size_t Capacity() const { return capacity; }
 
     /**
      * @return The number of elements that can be read from the RingBuffer
      */
-    size_t Readable()
+    size_t Readable() const
     {
       if (mWritePos >= mReadPos)
         return mWritePos - mReadPos;
@@ -81,7 +90,7 @@ namespace tules // Template Utility Library for Embedded Systems
     /**
      * @return The number of elements that can be written in the RingBuffer before it is full
      */
-    size_t Writable() { return capacity - Readable(); }
+    size_t Writable() const { return capacity - Readable(); }
 
     /**
      * @brief Adds a single element to the RingBuffer
@@ -92,8 +101,7 @@ namespace tules // Template Utility Library for Embedded Systems
     {
       if (Writable())
       {
-        mData[mWritePos] = val;
-        mWritePos = IncrementedWrapedValue(mWritePos);
+        mData[mWritePos++] = val;
         return true;
       }
       return false;
@@ -108,9 +116,7 @@ namespace tules // Template Utility Library for Embedded Systems
     {
       if (Readable())
       {
-        Optional<T> ret{mData[mReadPos]};
-        mReadPos = IncrementedWrapedValue(mReadPos);
-        return ret;
+        return Optional<T>{mData[mReadPos++]};
       }
       return {};
     }
@@ -148,17 +154,15 @@ namespace tules // Template Utility Library for Embedded Systems
      */
     uint8_t Overwrite(const T &val)
     {
-      if (IncrementedWrapedValue(mWritePos) == mReadPos) // Overwriting
+      if (mWritePos == mReadPos) // Overwriting
       {
-        mReadPos = IncrementedWrapedValue(mReadPos);
-        mData[mWritePos] = val;
-        mWritePos = mReadPos;
+        mData[mWritePos++] = val;
+        mReadPos = mWritePos;
         return RINGBUFFER_STATUS::DATA_OVERWRITTEN; // Some data has been overwritten
       }
       else // Simply writing
       {
-        mData[mWritePos] = val;
-        mWritePos = IncrementedWrapedValue(mWritePos);
+        mData[mWritePos++] = val;
         return RINGBUFFER_STATUS::OK; // No data has been overwritten
       }
     }
@@ -179,20 +183,14 @@ namespace tules // Template Utility Library for Embedded Systems
       else if (length > Writable())
       {
         for (size_t i = 0; i < length; ++i)
-        {
-          mData[mWritePos] = array[i];
-          mWritePos = IncrementedWrapedValue(mWritePos);
-        }
+          mData[mWritePos++] = array[i];
         mReadPos = mWritePos;
         return RINGBUFFER_STATUS::DATA_OVERWRITTEN;
       }
       else
       {
         for (size_t i = 0; i < length; ++i)
-        {
-          mData[mWritePos] = array[i];
-          mWritePos = IncrementedWrapedValue(mWritePos);
-        }
+          mData[mWritePos++] = array[i];
         return RINGBUFFER_STATUS::OK;
       }
     }
