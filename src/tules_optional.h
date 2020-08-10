@@ -123,24 +123,6 @@ namespace tules // Template Utility Library for Embedded Systems
     T ValueOr(const T &other) { return mLive ? mValue : other; }
     const T &ValueConstRefOr(const T &other) { return mLive ? mValue : other; }
   };
-
-  template <typename T>
-  class OptionalRef // When using this, all the proper checks need to be done by the user
-  {
-  private:
-    T *pValue;
-    bool mLive = false;
-
-  public:
-    OptionalRef() {}
-    OptionalRef(T &val) : pValue{&val}, mLive(true) {}
-
-    bool HasValue() { return mLive; }
-    operator bool() { return mLive; }
-    T &ValueRef() { return *pValue; }
-    T &operator*() { return *pValue; }
-    T *operator->() { return pValue; }
-  };
 } // namespace tules
 
 /*
@@ -160,18 +142,12 @@ struct TObj
 
 int main()
 {
-  int ii = 10;
-
-  tules::OptionalRef<int> oor{ii};
-  if (oor)
-    oor.ValueRef() = 4;
-
   tules::Optional<TObj> oo{6};
   tules::Optional<TObj> oo2{};
   oo2 = tules::Optional<TObj>{5, 2};
   if (oo)
-    return oo->val() * ii;
+    return oo->val();
   else
-    return TObj(4).val() * ii;
+    return TObj(4).val();
 }
 //*/
