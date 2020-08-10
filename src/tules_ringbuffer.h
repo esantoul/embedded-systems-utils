@@ -28,6 +28,7 @@ namespace tules // Template Utility Library for Embedded Systems
    * @param T the type that is being contained
    * @param capacity the maximum number of elements that can be contained
    * @todo Check whether a destructor should be called on clear
+   * @todo Add cyclic index class for mReadPos & mWritePos
    */
   template <typename T, size_t capacity>
   class RingBuffer
@@ -151,7 +152,7 @@ namespace tules // Template Utility Library for Embedded Systems
       {
         mReadPos = IncrementedWrapedValue(mReadPos);
         mData[mWritePos] = val;
-        mWritePos = IncrementedWrapedValue(mReadPos);
+        mWritePos = mReadPos;
         return RINGBUFFER_STATUS::DATA_OVERWRITTEN; // Some data has been overwritten
       }
       else // Simply writing
