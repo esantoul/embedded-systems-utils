@@ -1,7 +1,8 @@
 #pragma once
 
 /**
- * Template Utility Library for Embedded Systems
+ * @file Template Utility Library for Embedded Systems - common data & headers
+ * @author Etienne Santoul
  */
 
 #include <cstddef>
