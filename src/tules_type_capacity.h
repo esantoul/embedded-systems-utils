@@ -1,15 +1,17 @@
 #pragma once
 
 /**
- * Useful to get the smallest type that can fit the range 0 - N
- * Warning, this is designed for unsigned integers only
- * e.g. variables meant to store a positive array index
+ * @file Header file for TypeCapacity, a type that is the smallest unsigned int that can represent any value in the range [0, N]
+ * @author Etienne Santoul
  */
 
 #include "tules_commons.h"
 #include <limits>
 
-namespace tules // Template Utility Library for Embedded Systems
+/**
+ * @brief Template Utility Library for Embedded Systems
+ */
+namespace tules
 {
   template <uint8_t twoPwrNBytes>
   struct TypeCapacityHelper;
@@ -38,8 +40,11 @@ namespace tules // Template Utility Library for Embedded Systems
     typedef uint8_t type;
   };
 
+  /**
+   * @brief TypeCapacity<N>::type is the smallest unsigned type that can fit the range [0, N]
+   * @param N the maximal unsigned value that is going to be stored in the variable (included)
+   */
   template <uint64_t N>
-  // TypeCapacity<N>::type is the smallest type that can fit the range 0 - N
   class TypeCapacity
   {
   public:
