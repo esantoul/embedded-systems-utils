@@ -55,8 +55,3 @@ namespace tules // Template Utility Library for Embedded Systems
     return a / static_cast<T>(2) * x * x + (static_cast<T>(1) - a / static_cast<T>(2)) * x;
   }
 } // namespace tules
-
-int main()
-{
-  constexpr auto x = tules::curvegen<127>(.5f);
-}
