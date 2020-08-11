@@ -1,7 +1,8 @@
 #pragma once
 
 /**
- * @file Header file for TypeCapacity, a type that is the smallest unsigned int that can represent any value in the range [0, N]
+ * @file tules_type_capacity.hpp
+ * Definition of TypeCapacity, a type that is the smallest unsigned int that can represent any value in the range [0, N]
  * @author Etienne Santoul
  */
 
@@ -39,7 +40,7 @@ namespace tules // Template Utility Library for Embedded Systems
 
   /**
    * @brief TypeCapacity<N>::type is the smallest unsigned type that can fit the range [0, N]
-   * @param N the maximal unsigned value that is going to be stored in the variable (included)
+   * @tparam N the maximal unsigned value that is going to be stored in the variable (included)
    */
   template <uint64_t N>
   class TypeCapacity

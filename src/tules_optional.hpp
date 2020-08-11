@@ -12,6 +12,7 @@ namespace tules // Template Utility Library for Embedded Systems
 {
   /**
    * @brief An optional container where the contained object is constructed only if explicitely needed
+   * @tparam T the type that is contained
    */
   template <typename T>
   class Optional
@@ -26,9 +27,7 @@ namespace tules // Template Utility Library for Embedded Systems
     /**
      * @brief Empty constructor
      */
-    Optional()
-    {
-    }
+    Optional() {}
 
     /**
      * @brief Copy constructor

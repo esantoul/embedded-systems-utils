@@ -1,7 +1,8 @@
 #pragma once
 
 /**
- * @file Template Utility Library for Embedded Systems - common data & headers
+ * @file tules_common.hpp
+ * Template Utility Library for Embedded Systems - common data & headers
  * @author Etienne Santoul
  */
 

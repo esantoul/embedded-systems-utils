@@ -1,14 +1,15 @@
 #pragma once
 
 /**
- * @file A simple ring buffer with fixed size
+ * @file tules_ringbuffer.hpp
+ * Definition of a simple ring buffer with fixed size
  * @author Etienne Santoul
  */
 
 #include "tules_commons.hpp"
 #include "tules_type_capacity.hpp"
 #include "tules_optional.hpp"
-#include "tules_algorithms.h"
+#include "tules_algorithms.hpp"
 
 namespace tules // Template Utility Library for Embedded Systems
 {
@@ -25,8 +26,8 @@ namespace tules // Template Utility Library for Embedded Systems
 
   /**
    * @brief A contiguous chunk of data that is cycled through
-   * @param T the type that is being contained
-   * @param capacity the maximum number of elements that can be contained
+   * @tparam T the type that is being contained
+   * @tparam capacity the maximum number of elements that can be contained
    * @todo Check whether a destructor should be called on clear
    */
   template <typename T, size_t capacity>
@@ -36,10 +37,11 @@ namespace tules // Template Utility Library for Embedded Systems
     class CyclicIndex
     {
     private:
-      typedef TypeCapacity<capacity>::type mIdx = 0;
+      using cty_t = typename TypeCapacity<capacity>::type;
+      cty_t mIdx = 0;
 
     public:
-      TypeCapacity<capacity>::type operator=(TypeCapacity<capacity>::type val) { return mIdx = val; }
+      cty_t operator=(cty_t val) { return mIdx = val; }
 
       operator size_t() const { return mIdx; }
 

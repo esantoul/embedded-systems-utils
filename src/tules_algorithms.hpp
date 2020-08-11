@@ -1,7 +1,9 @@
 #pragma once
 
 /**
- * Algorithm functions collection
+ * @file tules_algorithms.hpp
+ * A collection of algorithms
+ * @author Etienne Santoul
  */
 
 #include "tules_commons.hpp"
@@ -41,6 +43,7 @@ namespace tules // Template Utility Library for Embedded Systems
 
   /**
    * @brief Generates values of the polynomia a/2 * x^2 + (1-a/2) * x
+   * @details This function is meant to be used for values in the range [0, 1] to add non linearity
    * @tparam alpha is an int8_t that is used to compute a = alpha/127
    * @tparam T type of x and of return value
    * @param x argument value
