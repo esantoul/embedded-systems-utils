@@ -5,7 +5,7 @@
  * @author Etienne Santoul
  */
 
-#include "tules_commons.h"
+#include "tules_commons.hpp"
 #include <limits>
 
 namespace tules // Template Utility Library for Embedded Systems

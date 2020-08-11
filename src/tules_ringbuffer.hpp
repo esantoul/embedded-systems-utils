@@ -5,9 +5,9 @@
  * @author Etienne Santoul
  */
 
-#include "tules_commons.h"
-#include "tules_type_capacity.h"
-#include "tules_optional.h"
+#include "tules_commons.hpp"
+#include "tules_type_capacity.hpp"
+#include "tules_optional.hpp"
 #include "tules_algorithms.h"
 
 namespace tules // Template Utility Library for Embedded Systems
@@ -28,7 +28,6 @@ namespace tules // Template Utility Library for Embedded Systems
    * @param T the type that is being contained
    * @param capacity the maximum number of elements that can be contained
    * @todo Check whether a destructor should be called on clear
-   * @todo Add cyclic index class for mReadPos & mWritePos
    */
   template <typename T, size_t capacity>
   class RingBuffer

@@ -4,7 +4,7 @@
  * Algorithm functions collection
  */
 
-#include "tules_commons.h"
+#include "tules_commons.hpp"
 #include <array>
 
 namespace tules // Template Utility Library for Embedded Systems
