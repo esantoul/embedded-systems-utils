@@ -17,13 +17,13 @@ namespace tules // Template Utility Library for Embedded Systems
     *rhs = temp;
   }
 
-  template <typename Iter>
-  void rotate(Iter iter_first, Iter iter_newFirst, Iter iter_end)
+  template <typename ForwardIterator>
+  void rotate(ForwardIterator iter_first, ForwardIterator iter_newFirst, ForwardIterator iter_end)
   {
     if (iter_newFirst == iter_first || iter_newFirst == iter_end)
       return;
-    Iter ff = iter_first;
-    Iter mm = iter_newFirst;
+    ForwardIterator ff = iter_first;
+    ForwardIterator mm = iter_newFirst;
     while (ff != iter_newFirst && mm != iter_end)
     {
       iter_swap(ff++, mm++);
@@ -38,4 +38,22 @@ namespace tules // Template Utility Library for Embedded Systems
       rotate(ff, iter_newFirst, iter_end);
     }
   }
+
+  /**
+   * @brief Generates values of the polynomia a/2 * x^2 + (1-a/2) * x
+   * @tparam alpha is an int8_t that is used to compute a = alpha/127
+   * @tparam T type of x and of return value
+   * @param x argument value
+   */
+  template <int8_t alpha, typename T>
+  constexpr T curvegen(T x)
+  {
+    T a = alpha / static_cast<T>(0x7F);
+    return a / static_cast<T>(2) * x * x + (static_cast<T>(1) - a / static_cast<T>(2)) * x;
+  }
 } // namespace tules
+
+int main()
+{
+  constexpr auto x = tules::curvegen<127>(.5f);
+}
