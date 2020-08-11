@@ -8,10 +8,7 @@
 #include "tules_commons.h"
 #include <limits>
 
-/**
- * @brief Template Utility Library for Embedded Systems
- */
-namespace tules
+namespace tules // Template Utility Library for Embedded Systems
 {
   template <uint8_t twoPwrNBytes>
   struct TypeCapacityHelper;
@@ -19,25 +16,25 @@ namespace tules
   template <>
   struct TypeCapacityHelper<3>
   {
-    typedef uint64_t type;
+    using type = uint64_t;
   };
 
   template <>
   struct TypeCapacityHelper<2>
   {
-    typedef uint32_t type;
+    using type = uint32_t;
   };
 
   template <>
   struct TypeCapacityHelper<1>
   {
-    typedef uint16_t type;
+    using type = uint16_t;
   };
 
   template <>
   struct TypeCapacityHelper<0>
   {
-    typedef uint8_t type;
+    using type = uint8_t;
   };
 
   /**
@@ -48,9 +45,9 @@ namespace tules
   class TypeCapacity
   {
   public:
-    typedef typename TypeCapacityHelper<(N > static_cast<uint64_t>(std::numeric_limits<uint32_t>::max())) +
-                                        (N > static_cast<uint64_t>(std::numeric_limits<uint16_t>::max())) +
-                                        (N > static_cast<uint64_t>(std::numeric_limits<uint8_t>::max()))>::type type;
+    using type = typename TypeCapacityHelper<(N > static_cast<uint64_t>(std::numeric_limits<uint32_t>::max())) +
+                                             (N > static_cast<uint64_t>(std::numeric_limits<uint16_t>::max())) +
+                                             (N > static_cast<uint64_t>(std::numeric_limits<uint8_t>::max()))>::type;
   };
 } // namespace tules
 
@@ -59,7 +56,7 @@ namespace tules
 int main()
 {
   using test_type = tules::TypeCapacity<10000>::type;
-  uint8_t nBytes = sizeof(test_type);
+  constexpr uint8_t nBytes = sizeof(test_type);
   return (typeid(test_type) == typeid(uint16_t)) * nBytes;
 }
 //*/
