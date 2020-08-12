@@ -195,5 +195,14 @@ namespace tules // Template Utility Library for Embedded Systems
         return RINGBUFFER_STATUS::OK;
       }
     }
+
+    /**
+     * @brief A function to take a look or modify inplace the value of the first readable element
+     * @return A pointer to the first readable element if there is one or nullptr
+     */
+    T *Peek()
+    {
+      return Readable() ? mData + mReadPos : nullptr;
+    }
   };
 } // namespace tules
