@@ -17,12 +17,6 @@ namespace tules // Template Utility Library for Embedded Systems
   template <typename T>
   class Optional
   {
-  private:
-    union {
-      T mValue;
-    };
-    bool mLive = false;
-
   public:
     /**
      * @brief Empty constructor
@@ -114,13 +108,48 @@ namespace tules // Template Utility Library for Embedded Systems
         mValue.~T();
     }
 
+    /**
+     * @return true if contains a value else false
+     */
     bool HasValue() { return mLive; }
+
+    /**
+     * @return true if contains a value else false
+     */
     operator bool() { return mLive; }
+
+    /**
+     * @return the stored value. Undefined behaviour if no value is contained
+     */
     T Value() { return mValue; }
+
+    /**
+     * @return a copy of the contained value
+     */
     T operator*() { return mValue; }
+
+    /**
+     * @brief to access members of the contained value
+     */
     T *operator->() { return &mValue; }
+
+    /**
+     * @param other a value to return if the Optional does not contain a value
+     * @return the value contained by the Optional or other
+     */
     T ValueOr(const T &other) { return mLive ? mValue : other; }
+
+    /**
+     * @param other a value to return if the Optional does not contain a value
+     * @return a const reference to the value contained by the Optional or other
+     */
     const T &ValueConstRefOr(const T &other) { return mLive ? mValue : other; }
+
+  private:
+    union {
+      T mValue;
+    };
+    bool mLive = false;
   };
 } // namespace tules
 

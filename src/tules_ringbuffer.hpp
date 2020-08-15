@@ -33,36 +33,6 @@ namespace tules // Template Utility Library for Embedded Systems
   template <typename T, size_t capacity>
   class RingBuffer
   {
-  private:
-    class CyclicIndex
-    {
-    private:
-      using cty_t = typename TypeCapacity<capacity>::type;
-      cty_t mIdx = 0;
-
-    public:
-      cty_t operator=(cty_t val) { return mIdx = val; }
-
-      operator size_t() const { return mIdx; }
-
-      size_t operator++(int)
-      {
-        size_t val = mIdx;
-        if (++mIdx >= capacity)
-          mIdx = 0;
-        return val;
-      }
-
-      size_t operator++()
-      {
-        (*this)++;
-        return *this;
-      }
-    };
-
-    T mData[capacity];
-    CyclicIndex mReadPos, mWritePos;
-
   public:
     /**
      * @brief Resets the RingBuffer
@@ -204,5 +174,48 @@ namespace tules // Template Utility Library for Embedded Systems
     {
       return Readable() ? mData + mReadPos : nullptr;
     }
+
+  private:
+    /**
+     * @brief A forward index that goes back to 0 when reaching capacity
+     */
+    class CyclicIndex
+    {
+    private:
+      using cty_t = typename TypeCapacity<capacity>::type;
+      cty_t mIdx = 0;
+
+    public:
+      cty_t operator=(cty_t val) { return mIdx = val; }
+
+      operator size_t() const { return mIdx; }
+
+      size_t operator++(int)
+      {
+        size_t val = mIdx;
+        if (++mIdx >= capacity)
+          mIdx = 0;
+        return val;
+      }
+
+      size_t operator++()
+      {
+        (*this)++;
+        return *this;
+      }
+    };
+
+    T mData[capacity];
+    CyclicIndex mReadPos, mWritePos;
   };
 } // namespace tules
+
+/*
+
+int main()
+{
+  tules::RingBuffer<uint8_t, 10> rb;
+  rb.Write(17);
+  return rb.Readable();
+}
+//*/
