@@ -1,5 +1,11 @@
 #pragma once
 
+/**
+ * @file tules_status_helper.hpp
+ * Definition of a helper that is useful for return values & error codes of data structures methods
+ * @author Etienne Santoul
+ */
+
 #include "tules_commons.hpp"
 
 namespace tules
@@ -34,7 +40,7 @@ namespace tules
   };
 } // namespace tules
 
-//*
+/*
 
 namespace tules
 {

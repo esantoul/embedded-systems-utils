@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file tules_ringbuffer.hpp
+ * @file tules_ring_buffer.hpp
  * Definition of a simple ring buffer with fixed size
  * @author Etienne Santoul
  */

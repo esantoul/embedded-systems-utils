@@ -1,5 +1,11 @@
 #pragma once
 
+/**
+ * @file tules_static_stack.hpp
+ * Definition of a stack with a capacity fixed at compile time
+ * @author Etienne Santoul
+ */
+
 #include "tules_commons.hpp"
 #include "tules_type_capacity.hpp"
 #include "tules_optional.hpp"
