@@ -111,7 +111,7 @@ namespace tules // Template Utility Library for Embedded Systems
     /**
      * @return true if contains a value else false
      */
-    bool HasValue() { return mLive; }
+    bool has_value() { return mLive; }
 
     /**
      * @return true if contains a value else false
@@ -121,7 +121,7 @@ namespace tules // Template Utility Library for Embedded Systems
     /**
      * @return the stored value. Undefined behaviour if no value is contained
      */
-    T Value() { return mValue; }
+    T value() { return mValue; }
 
     /**
      * @return a copy of the contained value
@@ -137,13 +137,13 @@ namespace tules // Template Utility Library for Embedded Systems
      * @param other a value to return if the Optional does not contain a value
      * @return the value contained by the Optional or other
      */
-    T ValueOr(const T &other) { return mLive ? mValue : other; }
+    T value_or(const T &other) { return mLive ? mValue : other; }
 
     /**
      * @param other a value to return if the Optional does not contain a value
      * @return a const reference to the value contained by the Optional or other
      */
-    const T &ValueConstRefOr(const T &other) { return mLive ? mValue : other; }
+    const T &value_cref_or(const T &other) { return mLive ? mValue : other; }
 
   private:
     union {

@@ -27,17 +27,19 @@ namespace tules // Template Utility Library for Embedded Systems
   /**
    * @brief A contiguous chunk of data that is cycled through
    * @tparam T the type that is being contained
-   * @tparam capacity the maximum number of elements that can be contained
+   * @tparam cty the maximum number of elements that can be contained
    * @todo Check whether a destructor should be called on clear
    */
-  template <typename T, size_t capacity>
+  template <typename T, size_t cty>
   class RingBuffer
   {
   public:
+    constexpr RingBuffer() = default;
+
     /**
      * @brief Resets the RingBuffer
      */
-    void Clear()
+    void clear()
     {
       mReadPos = mWritePos = 0;
     }
@@ -45,32 +47,32 @@ namespace tules // Template Utility Library for Embedded Systems
     /**
      * @return The maximal number of elements that can be contained in the RingBuffer
      */
-    size_t Capacity() const { return capacity; }
+    size_t capacity() const { return cty; }
 
     /**
      * @return The number of elements that can be read from the RingBuffer
      */
-    size_t Readable() const
+    size_t readable() const
     {
       if (mWritePos >= mReadPos)
         return mWritePos - mReadPos;
       else
-        return mWritePos + capacity - mReadPos;
+        return mWritePos + cty - mReadPos;
     }
 
     /**
      * @return The number of elements that can be written in the RingBuffer before it is full
      */
-    size_t Writable() const { return capacity - Readable(); }
+    size_t writable() const { return cty - readable(); }
 
     /**
      * @brief Adds a single element to the RingBuffer
      * @param val The value to be written
      * @return True if the element was added, else if the RingBuffer is already full
      */
-    bool Write(const T &val)
+    bool write(const T &val)
     {
-      if (Writable())
+      if (writable())
       {
         mData[mWritePos++] = val;
         return true;
@@ -83,9 +85,9 @@ namespace tules // Template Utility Library for Embedded Systems
      * @return A tules::Optional containing the first readable value if there
      * is some value to read or nothing if there a no elements to read
      */
-    Optional<T> Read()
+    Optional<T> read()
     {
-      if (Readable())
+      if (readable())
       {
         return Optional<T>{mData[mReadPos++]};
       }
@@ -98,14 +100,14 @@ namespace tules // Template Utility Library for Embedded Systems
      * @return A pointer to the first element of the array of read elements if the read was successful or nullptr if the read failed
      * @todo Maybe make a version that returns a custom iterator that avoids rotation of mData
      */
-    T *Read(size_t size)
+    T *read(size_t size)
     {
-      if (size <= Readable())
+      if (size <= readable())
       {
-        if (capacity - mReadPos > size) // Need to rotate mData in order to have a contiguous chunk of retured data
+        if (cty - mReadPos > size) // Need to rotate mData in order to have a contiguous chunk of retured data
         {
-          tules::rotate(mData, mData + mReadPos, mData + capacity);
-          mWritePos = mReadPos > mWritePos ? mWritePos + capacity - mReadPos : mWritePos - mReadPos;
+          tules::rotate(mData, mData + mReadPos, mData + cty);
+          mWritePos = mReadPos > mWritePos ? mWritePos + cty - mReadPos : mWritePos - mReadPos;
           mReadPos = 0;
           return mData;
         }
@@ -123,7 +125,7 @@ namespace tules // Template Utility Library for Embedded Systems
      * @param val The value to be written
      * @return A tules::RINGBUFFER_STATUS status code
      */
-    uint8_t Overwrite(const T &val)
+    uint8_t overwrite(const T &val)
     {
       if (mWritePos == mReadPos) // Overwriting
       {
@@ -145,13 +147,13 @@ namespace tules // Template Utility Library for Embedded Systems
      * @param length The number of elements to be added to the RingBuffer
      * @return A tules::RINGBUFFER_STATUS status code
      */
-    uint8_t Overwrite(const T *array, size_t length)
+    uint8_t overwrite(const T *array, size_t length)
     {
-      if (length > capacity)
+      if (length > cty)
       {
         return RINGBUFFER_STATUS::NO_DATA_WRITTEN | RINGBUFFER_STATUS::NOT_ENOUGH_SPACE
       }
-      else if (length > Writable())
+      else if (length > writable())
       {
         for (size_t i = 0; i < length; ++i)
           mData[mWritePos++] = array[i];
@@ -170,19 +172,19 @@ namespace tules // Template Utility Library for Embedded Systems
      * @brief A function to take a look or modify inplace the value of the first readable element
      * @return A pointer to the first readable element if there is one or nullptr
      */
-    T *Peek()
+    T *peek()
     {
-      return Readable() ? mData + mReadPos : nullptr;
+      return readable() ? mData + mReadPos : nullptr;
     }
 
   private:
     /**
-     * @brief A forward index that goes back to 0 when reaching capacity
+     * @brief A forward index that goes back to 0 when reaching cty
      */
     class CyclicIndex
     {
     private:
-      using cty_t = typename TypeCapacity<capacity>::type;
+      using cty_t = typename TypeCapacity<cty>::type;
       cty_t mIdx = 0;
 
     public:
@@ -193,7 +195,7 @@ namespace tules // Template Utility Library for Embedded Systems
       size_t operator++(int)
       {
         size_t val = mIdx;
-        if (++mIdx >= capacity)
+        if (++mIdx >= cty)
           mIdx = 0;
         return val;
       }
@@ -205,7 +207,7 @@ namespace tules // Template Utility Library for Embedded Systems
       }
     };
 
-    T mData[capacity];
+    T mData[cty]{};
     CyclicIndex mReadPos, mWritePos;
   };
 } // namespace tules
@@ -214,8 +216,8 @@ namespace tules // Template Utility Library for Embedded Systems
 
 int main()
 {
-  tules::RingBuffer<uint8_t, 10> rb;
-  rb.Write(17);
-  return rb.Readable();
+  tules::RingBuffer<uint8_t, 10> rb{};
+  rb.write(17);
+  return rb.readable();
 }
 //*/
