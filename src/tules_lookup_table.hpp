@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file tules_lookuptable.hpp
+ * @file tules_lookup_table.hpp
  * Definition of the LookUpTable class. This class generates a lookup table at compile time.
  * @author Etienne Santoul
  */
