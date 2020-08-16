@@ -4,7 +4,6 @@
  * @file tules_bool_collection.hpp
  * Definition of an object representing an array of bool optimised in terms of space
  * @author Etienne Santoul
- * @todo add comments
  */
 
 #include "tules_commons.hpp"
@@ -15,14 +14,28 @@ namespace tules // Template Utility Library for Embedded Systems
   class BoolCollection
   {
   public:
+    /**
+     * @brief Default constructor
+     */
     constexpr BoolCollection() = default;
 
+    /**
+     * @brief List initializer constructor
+     */
     template <typename... Args>
     constexpr BoolCollection(Args... args) : mData{static_cast<uint8_t>(args)...} {}
 
+    /**
+     * @brief Represents a bit an enable interaction with it
+     */
     class Bit
     {
     public:
+      /**
+       * @brief Constructor
+       * @param ob Origin byte
+       * @param bp Bit position in the byte (must be in the range [0, 7])
+       */
       constexpr Bit(uint8_t &ob, const uint8_t &bp) : mOriginByte(ob), mBitPosition(bp) {}
 
       constexpr operator bool() const
@@ -59,9 +72,17 @@ namespace tules // Template Utility Library for Embedded Systems
       const uint8_t mBitPosition;
     };
 
+    /**
+     * @brief Represents a constant bit an enable interaction with it
+     */
     class CBit
     {
     public:
+      /**
+       * @brief Constructor
+       * @param ob Origin byte
+       * @param bp Bit position in the byte (must be in the range [0, 7])
+       */
       constexpr CBit(const uint8_t &ob, const uint8_t &bp) : mBool{static_cast<bool>(ob & (1 << bp))} {}
 
       constexpr operator bool() const
@@ -88,10 +109,24 @@ namespace tules // Template Utility Library for Embedded Systems
       const bool mBool;
     };
 
+    /**
+     * @brief Forward iterator object.
+     * Returns a Bit when dereferenced
+     */
     class ForwardIterator
     {
     public:
+      /**
+       * @brief Constructor for an iterator to the begin of the BoolCollection
+       * @param data the BoolCollection values uint8_t array pointer
+       */
       constexpr ForwardIterator(uint8_t *data) : mIndex(sz), pDat(data) {}
+
+      /**
+       * @brief Constructor for an iterator at a given bit of the BoolCollection
+       * @param index the index of the bit to which the iterator should point to
+       * @param data the BoolCollection values uint8_t array pointer
+       */
       constexpr ForwardIterator(size_t index, uint8_t *data) : mIndex(index), pDat(data) {}
 
       constexpr bool operator==(const ForwardIterator &other) const
@@ -120,10 +155,24 @@ namespace tules // Template Utility Library for Embedded Systems
       uint8_t *pDat;
     };
 
+    /**
+     * @brief Constant Forward iterator object.
+     * Returns a CBit when dereferenced
+     */
     class CForwardIterator
     {
     public:
+      /**
+       * @brief Constructor for an iterator to the begin of the BoolCollection
+       * @param data the BoolCollection values uint8_t array pointer
+       */
       constexpr CForwardIterator(const uint8_t *data) : mIndex(sz), pDat(data) {}
+
+      /**
+       * @brief Constructor for an iterator at a given bit of the BoolCollection
+       * @param index the index of the bit to which the iterator should point to
+       * @param data the BoolCollection values uint8_t array pointer
+       */
       constexpr CForwardIterator(size_t index, const uint8_t *data) : mIndex(index), pDat(data) {}
 
       constexpr bool operator==(const CForwardIterator &other) const
@@ -152,46 +201,75 @@ namespace tules // Template Utility Library for Embedded Systems
       const uint8_t *pDat;
     };
 
+    /**
+     * @return a ForwardIterator to the begin of the collection
+     */
     constexpr ForwardIterator begin()
     {
       return {0, mData};
     }
 
+    /**
+     * @return a ForwardIterator to the end of the collection
+     */
     constexpr ForwardIterator end()
     {
       return {mData};
     }
 
+    /**
+     * @return a CForwardIterator to the begin of the collection
+     */
     constexpr CForwardIterator begin() const
     {
       return {0, mData};
     }
 
+    /**
+     * @return a CForwardIterator to the end of the collection
+     */
     constexpr CForwardIterator end() const
     {
       return {mData};
     }
 
+    /**
+     * @return a CForwardIterator to the begin of the collection
+     */
     constexpr CForwardIterator cbegin() const
     {
       return {0, mData};
     }
 
+    /**
+     * @return a CForwardIterator to the end of the collection
+     */
     constexpr CForwardIterator cend() const
     {
       return {mData};
     }
 
-    constexpr CBit operator[](size_t index) const
-    {
-      return {mData[index / 8], static_cast<uint8_t>(7 - index % 8)};
-    }
-
+    /**
+     * @brief Array subscript operator
+     * @param index the index of the desired bit
+     */
     constexpr Bit operator[](size_t index)
     {
       return {mData[index / 8], static_cast<uint8_t>(7 - index % 8)};
     }
 
+    /**
+     * @brief Array subscript operator
+     * @param index the index of the desired bit
+     */
+    constexpr CBit operator[](size_t index) const
+    {
+      return {mData[index / 8], static_cast<uint8_t>(7 - index % 8)};
+    }
+
+    /**
+     * @brief Fills the bool collection with false
+     */
     constexpr void clear()
     {
       for (size_t i = 0; i < (sz + 7) / 8; ++i)
