@@ -5,7 +5,7 @@
  * Definition of a set data structure with a capacity fixed at compile time
  * @author Etienne Santoul
  * @todo add comments
- * @todo make as constexpr as possible
+ * @todo make uint32_t version (limited to uint16_t capacity for now)
  */
 
 #include "tules_type_capacity.hpp"
@@ -15,8 +15,10 @@ namespace tules
   template <typename T, uint16_t cty>
   class StaticSet
   {
+    using cty_t = typename TypeCapacity<cty>::type;
+
   public:
-    StaticSet()
+    constexpr StaticSet()
         : mSize{0},
           mStatus{},
           mData{},
@@ -26,29 +28,39 @@ namespace tules
     {
     }
 
-    void clear()
+    constexpr void clear()
     {
-      std::fill(mStatus, mStatus + cty, false); // TODO replace mStatus by a BoolCollection and use method clear
+      mStatus.clear();
       mSize = 0;
     }
 
+    template <bool constant>
     class ForwardIterator
     {
+      using set_t = std::conditional_t<constant, const StaticSet<T, cty>, StaticSet<T, cty>>;
+      using unref_t = std::conditional_t<constant, const T, T>;
+
     public:
-      ForwardIterator(StaticSet<T, cty> *parent, uint16_t i = cty)
+      constexpr ForwardIterator(set_t *parent, cty_t i = cty)
           : mParent(parent),
             mIdx(i)
       {
       }
 
-      T &operator*()
+      constexpr unref_t &operator*()
       {
         return mParent->mData[mIdx];
       }
 
-      bool operator!=(const ForwardIterator &rhs) const { return (mParent != rhs.mParent || mIdx != rhs.mIdx); }
-      bool operator==(const ForwardIterator &rhs) const { return not(*this != rhs); };
-      ForwardIterator &operator++()
+      constexpr unref_t &operator*() const
+      {
+        return mParent->mData[mIdx];
+      }
+
+      constexpr bool operator!=(const ForwardIterator &rhs) const { return (mParent != rhs.mParent || mIdx != rhs.mIdx); }
+      constexpr bool operator==(const ForwardIterator &rhs) const { return not(*this != rhs); };
+
+      constexpr ForwardIterator &operator++()
       {
         do
           ++mIdx;
@@ -56,41 +68,67 @@ namespace tules
         return *this;
       }
 
-    protected:
-      StaticSet *mParent;
-      uint16_t mIdx;
+    private:
+      set_t *mParent;
+      cty_t mIdx;
     };
 
-    ForwardIterator begin()
+    constexpr ForwardIterator<false> begin()
     {
-      uint16_t idx = 0;
+      cty_t idx = 0;
       while (idx < cty and mStatus[idx] == false)
         idx++;
-      return ForwardIterator(this, idx);
+      return {this, idx};
     }
 
-    ForwardIterator end()
+    constexpr ForwardIterator<false> end()
     {
-      return ForwardIterator(this);
+      return {this};
     }
 
-    uint16_t size() const
+    constexpr ForwardIterator<true> begin() const
+    {
+      cty_t idx = 0;
+      while (idx < cty and mStatus[idx] == false)
+        idx++;
+      return {this, idx};
+    }
+
+    constexpr ForwardIterator<true> end() const
+    {
+      return {this};
+    }
+
+    constexpr ForwardIterator<true> cbegin() const
+    {
+      cty_t idx = 0;
+      while (idx < cty and mStatus[idx] == false)
+        idx++;
+      return {this, idx};
+    }
+
+    constexpr ForwardIterator<true> cend() const
+    {
+      return {this};
+    }
+
+    constexpr size_t size() const
     {
       return mSize;
     }
 
-    uint16_t capacity() const
+    constexpr size_t capacity() const
     {
       return cty;
     }
 
-    ForwardIterator insert(const T &el)
+    constexpr ForwardIterator<false> insert(const T &el)
     {
       if (mSize < cty)
       {
-        uint16_t i = hash(el);
-        uint16_t parent = i;
-        uint16_t root = i;
+        cty_t i = hash(el);
+        cty_t parent = i;
+        cty_t root = i;
         // Most common case: the root slot is empty
         if (mStatus[i] == false)
         {
@@ -99,7 +137,7 @@ namespace tules
           mData[i] = el;
           mChild[i] = cty;
           mForwardIndex[i] = cty;
-          return ForwardIterator(this, i);
+          return {this, i};
         }
 
         // Else the root slot is populated
@@ -117,7 +155,7 @@ namespace tules
         while (mStatus[i]) // Continue to iterate while slots are populated
         {
           if (mData[i] == el)
-            return ForwardIterator(this, i);
+            return {this, i};
           if (remaining_chained_children == false) // No more children to iterate through
           {
             increment_wrap(i);
@@ -147,7 +185,7 @@ namespace tules
         else
           mChild[parent] = i;
 
-        return ForwardIterator(this, i);
+        return {this, i};
       }
       else
       {
@@ -155,14 +193,19 @@ namespace tules
       }
     }
 
-    ForwardIterator find(const T &el)
+    constexpr ForwardIterator<false> find(const T &el)
     {
-      return ForwardIterator(this, find_element_index(el));
+      return {this, find_element_index(el)};
     }
 
-    bool erase(const T &el)
+    constexpr ForwardIterator<true> find(const T &el) const
     {
-      uint16_t i = find_element_index(el);
+      return {this, find_element_index(el)};
+    }
+
+    constexpr bool erase(const T &el)
+    {
+      cty_t i = find_element_index(el);
       if (i == cty)
         return false;
       erase_cell_recursive(i);
@@ -170,10 +213,10 @@ namespace tules
       return true;
     }
 
-  protected:
-    uint16_t find_element_index(const T &el) const
+  private:
+    constexpr cty_t find_element_index(const T &el) const
     {
-      uint16_t i = hash(el);
+      cty_t i = hash(el);
       if (mStatus[i])
       {
         if (mData[i] == el)
@@ -190,7 +233,7 @@ namespace tules
       return cty;
     }
 
-    void erase_cell_recursive(uint16_t i) // TODO Extensive tests, there seems to be a bug here
+    constexpr void erase_cell_recursive(cty_t i) // TODO Extensive tests, there seems to be a bug here
     {
       if (mChild[i] == cty) // Last child in children chain
       {
@@ -225,7 +268,7 @@ namespace tules
       return static_cast<uint32_t>(-1) >> (__builtin_clz(x) + 1);
     }
 
-    uint16_t hash(const T &el) const
+    constexpr uint16_t hash(const T &el) const
     {
       if constexpr (__builtin_popcount(cty) == 1)
       {
@@ -233,27 +276,60 @@ namespace tules
       }
       else
       {
-        uint16_t h1;
-        uint32_t hh;
-        h1 = 0xDEBF * static_cast<uint16_t>(el);
-        hh = h1 * cty;
+        uint16_t h1 = 0xDEBF * static_cast<uint16_t>(el);
+        uint32_t hh = h1 * cty;
         return hh >> 16;
       }
     }
 
-    void increment_wrap(uint16_t &i)
+    constexpr void increment_wrap(cty_t &i)
     {
       i += 1;
       if (i >= cty)
         i = 0;
     }
 
-    uint16_t mSize;
+    cty_t mSize;
     bool mStatus[cty];
     T mData[cty];
-    uint16_t mForwardIndex[cty];
-    uint16_t mChild[cty];
+    cty_t mForwardIndex[cty];
+    cty_t mChild[cty];
     uint16_t mMask;
   };
 
 } // namespace tules
+
+/*
+
+constexpr auto gen = []() {
+  tules::StaticSet<uint8_t, 10> ss;
+  ss.insert(5);
+  ss.insert(97);
+  auto f = ss.find(77);
+  return f == ss.end() ? 2 : *f;
+};
+
+template <size_t N>
+uint8_t findValueOr(const tules::StaticSet<uint8_t, N> &set, uint8_t valuetofind, uint8_t alternative)
+{
+  auto f = set.find(valuetofind);
+  return f == set.end() ? alternative : *f;
+}
+
+template <typename T>
+constexpr uint8_t CUI8(const T &v)
+{
+  return static_cast<uint8_t>(v);
+}
+
+int main()
+{
+  constexpr auto val = gen();
+  tules::StaticSet<uint8_t, 12> s1;
+  s1.insert(24);
+  return findValueOr<12>(s1, CUI8(24), CUI8(3)) * val;
+}
+
+constexpr size_t sss = sizeof(tules::StaticSet<int, 128>);
+
+//*/
