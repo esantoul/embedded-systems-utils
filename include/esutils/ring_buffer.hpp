@@ -7,11 +7,11 @@
  * @author Etienne Santoul
  */
 
+#include <algorithm>
 #include <cstddef>
 #include <optional>
 
 #include "type_capacity.hpp"
-#include "algorithms.hpp"
 
 namespace esutils
 {
@@ -108,7 +108,7 @@ namespace esutils
       {
         if (cty - mReadPos > size) // Need to rotate mData in order to have a contiguous chunk of retured data
         {
-          esutils::rotate(mData, mData + mReadPos, mData + cty);
+          std::rotate(mData, mData + mReadPos, mData + cty);
           mWritePos = mReadPos > mWritePos ? mWritePos + cty - mReadPos : mWritePos - mReadPos;
           mReadPos = 0;
           return mData;
