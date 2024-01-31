@@ -16,11 +16,18 @@ set(COMMON_COMPILE_OPTIONS
   -Wall
   -Wextra
   -Werror
-  -Wpedantic
+  -pedantic
   -Wshadow
   -Wnon-virtual-dtor
   -Wold-style-cast
-  -Wcast-align # <-- this one may be tricky to solve, please ask someone who knows if you are stuck
+  -Wuseless-cast
+  -Wcast-align # <-- this one may be tricky to solve so please feel free to ask me if you are stuck
+  -Wduplicated-cond
+  -Wduplicated-branches
+  -Wlogical-op
+  -Wsuggest-override
+  -Wno-unused-parameter
+  -Wno-unknown-warning-option
   >
 )
 
