@@ -1,14 +1,16 @@
-#pragma once
+#ifndef ESUTILS_BOOL_COLLECTION_HPP
+#define ESUTILS_BOOL_COLLECTION_HPP
 
 /**
- * @file tules_bool_collection.hpp
+ * @file bool_collection.hpp
  * Definition of an object representing an array of bool optimised in terms of space
  * @author Etienne Santoul
  */
 
-#include "tules_commons.hpp"
+#include <cstddef>
+#include <cstdint>
 
-namespace tules // Template Utility Library for Embedded Systems
+namespace esutils
 {
   template <size_t sz>
   class BoolCollection
@@ -281,56 +283,6 @@ namespace tules // Template Utility Library for Embedded Systems
   private:
     uint8_t mData[(sz + 7) / 8]{};
   };
-} // namespace tules
+} // namespace esutils
 
-/*
-
-#include <cstdio>
-#include <array>
-
-constexpr std::array<uint8_t, 10> gen(const tules::BoolCollection<10> c)
-{
-  std::array<uint8_t, 10> a{};
-  auto dat = a.data();
-  for (auto el : c)
-    *(dat++) = el.value();
-  return a;
-};
-
-constexpr std::array<uint8_t, 10> gen2()
-{
-  std::array<uint8_t, 10> a{};
-  auto dat = a.data();
-  tules::BoolCollection<10> cc{0xF1, 0b01000000};
-  for (auto el : cc)
-    *(dat++) = el.value();
-  *(dat - 4) = cc[7];
-  return a;
-};
-
-int main()
-{
-  static constexpr tules::BoolCollection<10> bc{0xF1, 0b01000000};
-  tules::BoolCollection<10> bc2 = bc;
-  constexpr std::array<uint8_t, 10> s = gen(bc);
-  constexpr std::array<uint8_t, 10> s2 = gen2();
-
-  for (const auto &el : bc)
-  {
-    printf("%d ", el.value());
-  }
-  puts("");
-  for (auto &&el : bc2)
-  {
-    el = true;
-    printf("%d ", el.value());
-  }
-  puts("");
-  for (const auto &el : bc2)
-  {
-    printf("%d ", el.value());
-  }
-  return s[6] + s2[7];
-}
-
-//*/
+#endif // ESUTILS_BOOL_COLLECTION_HPP

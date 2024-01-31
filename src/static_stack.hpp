@@ -1,16 +1,18 @@
-#pragma once
+#ifndef ESUTILS_STATIC_STACK_HPP
+#define ESUTILS_STATIC_STACK_HPP
 
 /**
- * @file tules_static_stack.hpp
+ * @file static_stack.hpp
  * Definition of a stack with a capacity fixed at compile time
  * @author Etienne Santoul
  */
 
-#include "tules_commons.hpp"
-#include "tules_type_capacity.hpp"
-#include "tules_optional.hpp"
+#include <cstddef>
+#include <optional>
 
-namespace tules
+#include "type_capacity.hpp"
+
+namespace esutils
 {
   template <typename T, size_t cty>
   class StaticStack
@@ -54,9 +56,9 @@ namespace tules
 
     /**
      * @brief Remove the top element from the stack
-     * @return an Optional containing the top element if the StaticStack size was >= 1 else an empty Optional
+     * @return a std::optional containing the top element if the StaticStack size was >= 1 else an empty optional
      */
-    Optional<T> pop()
+    std::optional<T> pop()
     {
       if (mSize)
       {
@@ -140,17 +142,6 @@ namespace tules
     cty_t mSize = 0;
   };
 
-} // namespace tules
+} // namespace esutils
 
-/*
-
-int main()
-{
-  tules::StaticStack<uint8_t, 16> ss{};
-  ss.push(12);
-  ss.find(12);
-  auto el = ss.pop();
-  return el.value_or(0xFF);
-}
-
-//*/
+#endif // ESUTILS_STATIC_STACK_HPP

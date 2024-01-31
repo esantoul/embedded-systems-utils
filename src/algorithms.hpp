@@ -1,15 +1,16 @@
-#pragma once
+#ifndef ESUTILS_ALGORITHMS_HPP
+#define ESUTILS_ALGORITHMS_HPP
 
 /**
- * @file tules_algorithms.hpp
+ * @file algorithms.hpp
  * A collection of algorithms
  * @author Etienne Santoul
  */
 
-#include "tules_commons.hpp"
+#include <cstdint>
 #include <array>
 
-namespace tules // Template Utility Library for Embedded Systems
+namespace esutils
 {
   template <typename Iter>
   constexpr void iter_swap(Iter lhs, Iter rhs)
@@ -54,4 +55,6 @@ namespace tules // Template Utility Library for Embedded Systems
     T a = alpha / static_cast<T>(0x7F);
     return a / static_cast<T>(2) * x * x + (static_cast<T>(1) - a / static_cast<T>(2)) * x;
   }
-} // namespace tules
+} // namespace esutils
+
+#endif // ESUTILS_ALGORITHMS_HPP

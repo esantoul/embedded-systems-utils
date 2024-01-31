@@ -1,17 +1,19 @@
-#pragma once
+#ifndef ESUTILS_RING_BUFFER_HPP
+#define ESUTILS_RING_BUFFER_HPP
 
 /**
- * @file tules_ring_buffer.hpp
+ * @file ring_buffer.hpp
  * Definition of a simple ring buffer with fixed size
  * @author Etienne Santoul
  */
 
-#include "tules_commons.hpp"
-#include "tules_type_capacity.hpp"
-#include "tules_optional.hpp"
-#include "tules_algorithms.hpp"
+#include <cstddef>
+#include <optional>
 
-namespace tules // Template Utility Library for Embedded Systems
+#include "type_capacity.hpp"
+#include "algorithms.hpp"
+
+namespace esutils
 {
   /**
    * @brief A structure containing all the possible status code returned by RingBuffer methods
@@ -82,14 +84,14 @@ namespace tules // Template Utility Library for Embedded Systems
 
     /**
      * @brief Read a single element of the RingBuffer. If an element is read, it is consumed from the RingBuffer.
-     * @return A tules::Optional containing the first readable value if there
+     * @return A std::optional containing the first readable value if there
      * is some value to read or nothing if there a no elements to read
      */
-    Optional<T> read()
+    std::optional<T> read()
     {
       if (readable())
       {
-        return Optional<T>{mData[mReadPos++]};
+        return {mData[mReadPos++]};
       }
       return {};
     }
@@ -106,7 +108,7 @@ namespace tules // Template Utility Library for Embedded Systems
       {
         if (cty - mReadPos > size) // Need to rotate mData in order to have a contiguous chunk of retured data
         {
-          tules::rotate(mData, mData + mReadPos, mData + cty);
+          esutils::rotate(mData, mData + mReadPos, mData + cty);
           mWritePos = mReadPos > mWritePos ? mWritePos + cty - mReadPos : mWritePos - mReadPos;
           mReadPos = 0;
           return mData;
@@ -123,7 +125,7 @@ namespace tules // Template Utility Library for Embedded Systems
     /**
      * @brief Adds a single element to the RingBuffer. If the RingBuffer is full, it overwrites the first value to read.
      * @param val The value to be written
-     * @return A tules::RINGBUFFER_STATUS status code
+     * @return A esutils::RINGBUFFER_STATUS status code
      */
     uint8_t overwrite(const T &val)
     {
@@ -145,7 +147,7 @@ namespace tules // Template Utility Library for Embedded Systems
      * Fails if trying to add more elements than the RingBuffer can contain
      * @param array A pointer to the first element to be added to the RingBuffer
      * @param length The number of elements to be added to the RingBuffer
-     * @return A tules::RINGBUFFER_STATUS status code
+     * @return A esutils::RINGBUFFER_STATUS status code
      */
     uint8_t overwrite(const T *array, size_t length)
     {
@@ -210,14 +212,6 @@ namespace tules // Template Utility Library for Embedded Systems
     T mData[cty]{};
     CyclicIndex mReadPos, mWritePos;
   };
-} // namespace tules
+} // namespace esutils
 
-/*
-
-int main()
-{
-  tules::RingBuffer<uint8_t, 10> rb{};
-  rb.write(17);
-  return rb.readable();
-}
-//*/
+#endif // ESUTILS_RING_BUFFER_HPP

@@ -1,15 +1,16 @@
-#pragma once
+#ifndef ESUTILS_TYPE_CAPACITY_HPP
+#define ESUTILS_TYPE_CAPACITY_HPP
 
 /**
- * @file tules_type_capacity.hpp
+ * @file type_capacity.hpp
  * Definition of TypeCapacity, a type that is the smallest unsigned int that can represent any value in the range [0, N]
  * @author Etienne Santoul
  */
 
-#include "tules_commons.hpp"
+#include <cstdint>
 #include <limits>
 
-namespace tules // Template Utility Library for Embedded Systems
+namespace esutils
 {
   template <uint8_t twoPwrNBytes>
   struct TypeCapacityHelper;
@@ -46,18 +47,11 @@ namespace tules // Template Utility Library for Embedded Systems
   class TypeCapacity
   {
   public:
-    using type = typename TypeCapacityHelper<(N > static_cast<uint64_t>(std::numeric_limits<uint32_t>::max())) +
-                                             (N > static_cast<uint64_t>(std::numeric_limits<uint16_t>::max())) +
-                                             (N > static_cast<uint64_t>(std::numeric_limits<uint8_t>::max()))>::type;
+    using type = typename TypeCapacityHelper<
+      (N > static_cast<uint64_t>(std::numeric_limits<uint32_t>::max())) +
+      (N > static_cast<uint64_t>(std::numeric_limits<uint16_t>::max())) +
+      (N > static_cast<uint64_t>(std::numeric_limits<uint8_t>::max()))>::type;
   };
-} // namespace tules
+} // namespace esutils
 
-/*
-#include <typeinfo>
-int main()
-{
-  using test_type = tules::TypeCapacity<10000>::type;
-  constexpr uint8_t nBytes = sizeof(test_type);
-  return (typeid(test_type) == typeid(uint16_t)) * nBytes;
-}
-//*/
+#endif // ESUTILS_TYPE_CAPACITY_HPP

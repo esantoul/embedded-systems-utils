@@ -1,16 +1,19 @@
-#pragma once
+#ifndef ESUTILS_STATIC_SET_HPP
+#define ESUTILS_STATIC_SET_HPP
 
 /**
- * @file tules_static_set.hpp
+ * @file static_set.hpp
  * Definition of a set data structure with a capacity fixed at compile time
  * @author Etienne Santoul
  * @todo add comments
  * @todo make uint32_t version (limited to uint16_t capacity for now)
  */
 
-#include "tules_type_capacity.hpp"
+#include <cstddef>
+#include <cstdint>
+#include "type_capacity.hpp"
 
-namespace tules
+namespace esutils
 {
   template <typename T, uint16_t cty>
   class StaticSet
@@ -19,14 +22,14 @@ namespace tules
 
   public:
     constexpr StaticSet()
-        : mSize{0},
-          mStatus{},
-          mData{},
-          mForwardIndex{},
-          mChild{},
-          mMask{make_mask(cty)}
-    {
-    }
+      :
+      mSize(0),
+      mStatus(),
+      mData(),
+      mForwardIndex(),
+      mChild(),
+      mMask(make_mask(cty))
+    {}
 
     constexpr void clear()
     {
@@ -42,10 +45,9 @@ namespace tules
 
     public:
       constexpr ForwardIterator(set_t *parent, cty_t i = cty)
-          : mParent(parent),
-            mIdx(i)
-      {
-      }
+        : mParent(parent),
+        mIdx(i)
+      {}
 
       constexpr unref_t &operator*()
       {
@@ -297,39 +299,6 @@ namespace tules
     uint16_t mMask;
   };
 
-} // namespace tules
+} // namespace esutils
 
-/*
-
-constexpr auto gen = []() {
-  tules::StaticSet<uint8_t, 10> ss;
-  ss.insert(5);
-  ss.insert(97);
-  auto f = ss.find(77);
-  return f == ss.end() ? 2 : *f;
-};
-
-template <size_t N>
-uint8_t findValueOr(const tules::StaticSet<uint8_t, N> &set, uint8_t valuetofind, uint8_t alternative)
-{
-  auto f = set.find(valuetofind);
-  return f == set.end() ? alternative : *f;
-}
-
-template <typename T>
-constexpr uint8_t CUI8(const T &v)
-{
-  return static_cast<uint8_t>(v);
-}
-
-int main()
-{
-  constexpr auto val = gen();
-  tules::StaticSet<uint8_t, 12> s1;
-  s1.insert(24);
-  return findValueOr<12>(s1, CUI8(24), CUI8(3)) * val;
-}
-
-constexpr size_t sss = sizeof(tules::StaticSet<int, 128>);
-
-//*/
+#endif // ESUTILS_STATIC_SET_HPP

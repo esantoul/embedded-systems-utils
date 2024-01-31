@@ -1,14 +1,15 @@
-#pragma once
+#ifndef ESUTILS_LOOKUP_TABLE_HPP
+#define ESUTILS_LOOKUP_TABLE_HPP
 
 /**
- * @file tules_lookup_table.hpp
+ * @file lookup_table.hpp
  * Definition of the LookUpTable class. This class generates a lookup table at compile time.
  * @author Etienne Santoul
  */
 
-#include "tules_commons.hpp"
+#include <cstddef>
 
-namespace tules // Template Utility Library for Embedded Systems
+namespace esutils
 {
   /**
    * @brief A lookup table generated at compile time
@@ -23,10 +24,12 @@ namespace tules // Template Utility Library for Embedded Systems
      * @brief Constructor
      * @param foo the function used to generate the lookup table values by being fed successive integers in the range [0, capacity[
      */
-    constexpr LookUpTable(T (*foo)(size_t))
+    constexpr LookUpTable(T(*foo)(size_t))
     {
       for (int i = 0; i < capacity; ++i)
+      {
         mData[i] = foo(i);
+      }
     }
 
     LookUpTable() = delete;
@@ -48,23 +51,6 @@ namespace tules // Template Utility Library for Embedded Systems
   private:
     T mData[capacity]{};
   };
-} // namespace tules
+} // namespace esutils
 
-/*
-#include "tules_algorithms.hpp"
-
-int main()
-{
-  constexpr auto round = [](double d) {
-    return int(d + 0.5);
-  };
-
-  constexpr auto myFun = [](size_t i) -> uint8_t {
-    return round(63 * tules::curvegen<-127>(i / 255.0));
-  };
-
-  constexpr tules::LookUpTable<uint8_t, 256> lut{myFun};
-  constexpr int vv = lut[128];
-  return vv;
-}
-//*/
+#endif // ESUTILS_LOOKUP_TABLE_HPP
