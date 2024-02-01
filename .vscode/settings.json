@@ -228,7 +228,6 @@
   "clang-format.style": "InheritParentConfig",
   "cmake.configureOnEdit": false,
   "cmake.configureSettings": {
-    "EMBODME_COMMON_WITH_TESTS": "ON", // this is how you select options when you configure with vscode
-    "EMBODME_COMMON_WITH_EXAMPLES": "ON"
+    "ESUTILS_WITH_TESTS": "ON", // this is how you select options when you configure with vscode
   }
 }
