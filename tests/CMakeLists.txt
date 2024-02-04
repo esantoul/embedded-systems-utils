@@ -13,6 +13,7 @@ add_executable(embedded_system_utils_tests)
 target_sources(embedded_system_utils_tests PRIVATE
   # Add sources here
   ${CMAKE_CURRENT_SOURCE_DIR}/test_bit_reference_wrapper.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_bit_slice_reference.cpp
 )
 
 set_target_properties(embedded_system_utils_tests PROPERTIES
